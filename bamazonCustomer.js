@@ -62,10 +62,12 @@ function startTransaction() {
                         connection.end();
                     }
                     else {
-                        totalCost = res[0].price * inquirerResponse.quantity;
-                        remainingQuantity = parseInt(res[0].stock_quantity) - parseInt(inquirerResponse.quantity);
+                        var totalCost = res[0].price * inquirerResponse.quantity;
+                        var remainingQuantity = parseInt(res[0].stock_quantity) - parseInt(inquirerResponse.quantity);
+                        var productSales = parseFloat(res[0].product_sales) + parseFloat(totalCost);
+                        productSales =  Number(productSales).toFixed(2); 
                         fulfillOrder(inquirerResponse.itemNum,
-                            remainingQuantity, totalCost);
+                            remainingQuantity, totalCost, productSales);
                     }
 
 
@@ -76,13 +78,16 @@ function startTransaction() {
 
 }
 
-function fulfillOrder(itemNum, quantity, cost) {
+function fulfillOrder(itemNum, quantity, cost, sales) {
     console.log("Fulfilling order...\n");
     var query = connection.query(
-        "UPDATE products SET ? WHERE ?",
+        "UPDATE products SET ?, ? WHERE ?",
         [
             {
                 stock_quantity: quantity
+            },
+            {
+                product_sales: sales
             },
             {
                 item_id: itemNum
