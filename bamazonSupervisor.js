@@ -1,5 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+const cTable = require('console.table');
 var c = require("./db.js");
 
 var connection = mysql.createConnection(c);
@@ -44,41 +45,18 @@ function showChoices() {
 
 }
 
+// Query for information joining items in departments table with products table calculating total_profit for each department
 function showTable() {
     var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, "
-    query += "SUM(products.product_sales) AS product_sales, product_sales - departments.over_head_costs AS total_profit "
+    query += "SUM(products.product_sales) AS product_sales, SUM(products.product_sales) - departments.over_head_costs AS total_profit "
     query += "FROM departments LEFT JOIN products ON (departments.department_name = products.department_name) "
     query += "GROUP BY departments.department_name"
     connection.query(query, function (err, res) {
 
         if (err) throw err;
-        // Log all results of the SELECT statement
-        console.log("| department_id |  department_name  | over_head_costs | product_sales | total_profit |");
-        console.log("| ------------- | ----------------- | --------------- | ------------- | ------------ |")
-
-
-        for (var i = 0; i < res.length; i++) {
-            var product_sales;
-            var total_profit;
-            if (res[i].product_sales === null) {
-                product_sales = 0;
-                total_profit = 0  - res[i].over_head_costs;
-            }
-            else {
-                product_sales = res[i].product_sales;
-                total_profit = res[i].total_profit;
-            }
-            
-            stringToPrint = "| " + res[i].department_id.toString().padEnd(13) + " | " +
-                res[i].department_name.padEnd(17) + " | " +
-                res[i].over_head_costs.toString().padEnd(15) +  " | " + 
-                product_sales.toString().padEnd(13) + " | " +
-                total_profit.toString().padEnd(12) + " | ";
-                
-            console.log(stringToPrint);
-
-        }
-        console.log("\n\n")
+      
+        var table = cTable.getTable(res);
+        console.log(table);
 
         showChoices();
 
@@ -87,7 +65,8 @@ function showTable() {
 }
 
 
-
+// Use inquirer to allow supervisor to specify department they want to add and overhead cost of this department
+// Update departments table to insert new record 
 function createDepartment() {
     inquirer.prompt([
         {

@@ -10,7 +10,7 @@ CREATE TABLE products (
   department_name VARCHAR(50) NOT NULL,
   price DECIMAL(6,2) NOT NULL,
   stock_quantity INTEGER(10) NOT NULL DEFAULT 0,
-  product_sales DECIMAL(6,2) NOT NULL DEFAULT 0,
+  product_sales DECIMAL(8,2) NOT NULL DEFAULT 0,
   PRIMARY KEY (item_id)
 );
 
@@ -29,18 +29,18 @@ VALUES ("Canvas Wall Art - Birch Trees Forest on a Foggy Day", "Home Decor", 29.
 CREATE TABLE departments (
   department_id INT NOT NULL AUTO_INCREMENT,
   department_name VARCHAR(50) NOT NULL,
-  over_head_costs DECIMAL(6,2) NOT NULL,
+  over_head_costs DECIMAL(8,2) NOT NULL,
   PRIMARY KEY (department_id)
 );
 
 INSERT INTO departments (department_name, over_head_costs)
-VALUES ("Home Decor", 3000),  
-       ("Kitchen & Dining", 5000),
-       ("Bed & Bath", 2000),
-       ("Garden & Outdoor", 5000),
-       ("Furniture", 7000),
-       ("Home Improvement", 6000),
-       ("Electronics", 6000);
+VALUES ("Home Decor", 3000.00),  
+       ("Kitchen & Dining", 5000.00),
+       ("Bed & Bath", 2000.00),
+       ("Garden & Outdoor", 5000.00),
+       ("Furniture", 7000.00),
+       ("Home Improvement", 6000.00),
+       ("Electronics", 6000.00);
 
 
 

@@ -1,5 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+const cTable = require('console.table');
 var c = require("./db.js");
 
 var connection = mysql.createConnection(c);
@@ -49,41 +50,29 @@ function showChoices() {
 
 }
 
+// Query for all items in products table
 function showItems() {
     console.log("Products for sale ...\n");
     connection.query("SELECT item_id, product_name, price, stock_quantity FROM products", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
-
-        for (var i = 0; i < res.length; i++) {
-            stringToPrint = res[i].item_id + ":" +
-                res[i].product_name + " Cost = $" +
-                res[i].price + " Quantity = " + res[i].stock_quantity;
-            console.log(stringToPrint);
-
-        }
-        console.log("\n\n")
-
+        var table = cTable.getTable(res);
+        console.log(table);
+        
         showChoices();
 
 
     });
 }
 
+// Query for items in products table where stock_quantity is less than 5
 function showLowInventory() {
     console.log("Products for sale ...\n");
     connection.query("SELECT item_id, product_name, price, stock_quantity FROM products WHERE stock_quantity < 5", function (err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
-
-        for (var i = 0; i < res.length; i++) {
-            stringToPrint = res[i].item_id + ":" +
-                res[i].product_name + " Cost = $" +
-                res[i].price + " Quantity = " + res[i].stock_quantity;
-            console.log(stringToPrint);
-
-        }
-        console.log("\n\n")
+        var table = cTable.getTable(res);
+        console.log(table);
 
         showChoices();
 
@@ -91,6 +80,8 @@ function showLowInventory() {
     });
 }
 
+// Use inquirer to allow manager to specify item they want to add to and quantity
+// Update products table increasing quantity for specified item
 function addInventory() {
     inquirer.prompt([
         {
@@ -136,7 +127,8 @@ function addInventory() {
 }
 
 
-
+// Use inquirer to allow manager to specify new product they want to add to and quantity
+// Update products table to insert new record
 function addProduct() {
     inquirer.prompt([
         {
